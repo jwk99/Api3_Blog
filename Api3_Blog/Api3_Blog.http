@@ -1,0 +1,6 @@
+@Api3_Blog_HostAddress = http://localhost:5224
+
+GET {{Api3_Blog_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

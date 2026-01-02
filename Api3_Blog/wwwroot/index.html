@@ -1,0 +1,55 @@
+﻿<!DOCTYPE html>
+<html>
+<body>
+    <h1>Blog</h1>
+    <ul id="posts"></ul>
+    <script>
+        fetch('/api/posts')
+            .then(r => r.json())
+            .then(posts => {
+                posts.forEach(p => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                      <h3>${p.title}</h3>
+                      <p>${p.body}</p>
+                      <button onclick="load(${p.id})">Komentarze</button>
+                      <div id="c${p.id}"></div>`;
+                    document.getElementById('posts').appendChild(li);
+                });
+            });
+        function load(id) {
+            fetch(`/api/posts/${id}/comments`)
+                .then(r => r.json())
+                .then(cs => {
+                    const d = document.getElementById('c' + id);
+                    d.innerHTML = cs.map(c => `<p>${c.author}:${c.body}</p>`).join('');
+                    d.innerHTML += `
+                    <input placeholder="Autor" id="a${id}">
+                    <input placeholder="Treść" id="b${id}">
+                    <button onclick="add(${id})">Dodaj</button>`;
+                });
+        }
+        function add(id) {
+            const authorInput = document.getElementById('a' + id);
+            const bodyInput = document.getElementById('b' + id);
+            fetch(`/api/posts/${id}/comments`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    author: authorInput.value,
+                    body: bodyInput.value
+                })
+            }).then(r => {
+                    if (r.ok) {
+                        authorInput.value = '';
+                        bodyInput.value = '';
+                        alert('Komentarz dodany (oczekuje na moderację)');
+                    } else {
+                        alert('Błąd dodawania komentarza');
+                    }
+                });
+        }
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+﻿@baseUrl = https://localhost:7051
+### POSTS
+### GET Posts
+GET {{baseUrl}}/api/posts
+Accept: application/json
+### Create Post
+POST {{baseUrl}}/api/posts
+Content-Type:application/json
+{
+  "title": "Post testowy",
+  "body": "Treść posta testowego"
+}
+### Create post - bad request
+POST {{baseUrl}}/api/posts
+Content-Type: application/json
+{
+  "title": "",
+  "body": ""
+}
+### COMMENTS
+### Add Comment
+POST {{baseUrl}}/api/posts/1/comments
+Content-Type: application/json
+{
+  "author": "Jan",
+  "body": "To jest komentarz do zatwierdzenia"
+}
+### Add comment - post not found (404)
+POST {{baseUrl}}/api/posts/999/comments
+Content-Type: application/json
+{
+  "author": "Jan",
+  "body": "Nie istniejący post"
+}
+### Get approved comments
+GET {{baseUrl}}/api/posts/1/comments
+Accept: application/json
+### MODERATION
+### Get pending comments
+GET {{baseUrl}}/api/comments/pending
+Accept: application/json
+### Approve comment
+POST {{baseUrl}}/api/comments/1/approve
+### Approve comment - again (409 Conflict)
+POST {{baseUrl}}/api/comments/1/approve
+### Approve non-existing comment (404)
+POST {{baseUrl}}/api/comments/999/approve
+### Get approved comments (should contain approved comment)
+GET {{baseUrl}}/api/posts/1/comments
+Accept: application/json

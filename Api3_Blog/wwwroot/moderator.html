@@ -1,0 +1,29 @@
+﻿<!DOCTYPE html>
+<html>
+<body>
+    <h1>Moderacja</h1>
+    <ul id="list"></ul>
+    <script>
+        function load() {
+            fetch('/api/comments/pending')
+                .then(r => r.json())
+                .then(cs => {
+                    const ul = document.getElementById('list');
+                    ul.innerHTML = '';
+                    cs.forEach(c => {
+                        const li = document.createElement('li');
+                        li.innerHTML=`${c.author}:${c.body}
+                        <button onclick="approve(${c.id})">Zatwierdź</button>`;
+                        ul.appendChild(li);
+                    });
+                });
+        }
+        function approve(id) {
+            fetch(`/api/comments/${id}/approve`,
+                { method: 'POST' })
+                .then(load);
+        }
+        load();
+    </script>
+</body>
+</html>
